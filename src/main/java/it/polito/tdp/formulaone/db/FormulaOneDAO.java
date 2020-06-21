@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import it.polito.tdp.formulaone.model.Adiacenza;
+import it.polito.tdp.formulaone.model.LapTime;
 import it.polito.tdp.formulaone.model.Race;
 import it.polito.tdp.formulaone.model.Season;
 
@@ -48,6 +49,28 @@ public class FormulaOneDAO {
 			return null;
 		}
 	}
+	
+	public List<LapTime> getAllLapTimesByRace(Race r) {
+		String sql =	"SELECT * " + 
+						"FROM laptimes " + 
+						"WHERE raceId = ? ";
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, r.getRaceId());
+			ResultSet rs = st.executeQuery();
+			List<LapTime> list = new ArrayList<>();
+			while (rs.next()) {
+				list.add(new LapTime(rs.getInt("raceId"), rs.getInt("driverId"), rs.getInt("lap"), rs.getInt("position"), rs.getString("time"), rs.getInt("miliseconds")));
+			}
+			conn.close();
+			return list;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	public List<Season> getAllSeasons() {
 		String sql = "SELECT year, url FROM seasons ORDER BY year";
@@ -68,8 +91,30 @@ public class FormulaOneDAO {
 		}
 	}
 	
+	public int getNumeroGiri(Race r) {
+		String sql = 	"	SELECT laps " + 
+						"	FROM results " + 
+						"	WHERE raceId = ? " + 
+						"	ORDER BY laps desc";
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, r.getRaceId());
+			ResultSet rs = st.executeQuery();
+			while (rs.next()) {
+				conn.close();
+				return rs.getInt("laps");
+			}
+			conn.close();
+			return -1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
+	
 	public List<Race> getAllRacesBySeason(int year) {
-		String sql = "	SELECT * FROM races r WHERE r.year = ? ";
+		String sql = "	SELECT * FROM races WHERE year = ? ";
 		try {
 			Connection conn = DBConnect.getConnection();
 			PreparedStatement st = conn.prepareStatement(sql);
@@ -77,8 +122,19 @@ public class FormulaOneDAO {
 			ResultSet rs = st.executeQuery();
 			List<Race> list = new ArrayList<>();
 			while (rs.next()) {
-				Race rTemp = new Race(rs.getInt("raceId"), rs.getInt("year"), rs.getInt("round"), rs.getInt("circuitId"), rs.getString("name"), rs.getDate("date").toLocalDate(), 
-						rs.getTime("time").toLocalTime(), rs.getString("url"));
+				int raceId = rs.getInt("raceId");
+				int anno = rs.getInt("year");
+				int round = rs.getInt("round");
+				int circuitId = rs.getInt("circuitId");
+				String name = rs.getString("name");
+				LocalDate date = rs.getDate("date").toLocalDate();
+				LocalTime time;
+				if (rs.getTime("time") != null)
+					time = rs.getTime("time").toLocalTime();
+				else 
+					time = null;
+				String url = rs.getString("url");
+				Race rTemp = new Race(raceId, anno, round, circuitId, name, date, time, url);
 				list.add(rTemp);
 			}
 			conn.close();
@@ -99,6 +155,26 @@ public class FormulaOneDAO {
 			List<Integer> list = new ArrayList<>();
 			while (rs.next()) {
 				list.add(rs.getInt("year"));
+			}
+			conn.close();
+			return list;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public List<Integer> getAllDriversIdByRace(Race r) {
+		String sql = "SELECT distinct driverId FROM laptimes WHERE raceId = ?";
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, r.getRaceId());
+			ResultSet rs = st.executeQuery();
+			List<Integer> list = new ArrayList<>();
+			while (rs.next()) {
+				list.add(rs.getInt("driverId"));
 			}
 			conn.close();
 			return list;

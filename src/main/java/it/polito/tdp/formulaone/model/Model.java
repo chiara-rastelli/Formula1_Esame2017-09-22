@@ -18,11 +18,25 @@ public class Model {
 	SimpleWeightedGraph<Race, DefaultWeightedEdge> graph;
 	Map<Integer, Race> racesIdMap;
 	Boolean grafoCreato;
+	Simulator s;
 	
 	public Model() {
 		this.db = new FormulaOneDAO();
 		this.racesIdMap = new HashMap<>();
 		this.grafoCreato = false;
+	}
+	
+	public Map<Integer, Integer> simula(Double probabilitaPitStop, int secondiPitStop, Race r){
+		this.s = new Simulator(this.getAllDriversIdRace(r), probabilitaPitStop, secondiPitStop, this.getLapsRace(r), this.getAllLapTimesRace(r));
+		return s.puntiPiloti;
+	}
+	
+	public List<LapTime> getAllLapTimesRace(Race r){
+		return this.db.getAllLapTimesByRace(r);
+	}
+	
+	public List<Integer> getAllDriversIdRace(Race r){
+		return this.db.getAllDriversIdByRace(r);
 	}
 	
 	public List<Integer> getAllYears(){
@@ -34,6 +48,10 @@ public class Model {
 		for(Race r : this.graph.vertexSet())
 			result.add(r);
 		return result;
+	}
+	
+	public int getLapsRace(Race r) {
+		return this.db.getNumeroGiri(r);
 	}
 	
 	public void creaGrafo(int year) {

@@ -8,13 +8,14 @@ public class TestModel {
 		// TODO Auto-generated method stub
 
 		Model m = new Model();
-		m.creaGrafo(2006);
+		m.creaGrafo(1998);
 		
-		List<Adiacenza> list = m.getArcoPesoMassimo(2006);
+	/*	List<Adiacenza> list = m.getArcoPesoMassimo(2006);
 		if (list.size() == 1)
 			System.out.println(list.get(0));
 		for (Adiacenza a : list)
 			System.out.println(a.toString()+"\n");
+	*/
+	
 	}
-
 }

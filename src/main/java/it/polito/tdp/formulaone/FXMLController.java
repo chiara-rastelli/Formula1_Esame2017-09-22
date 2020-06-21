@@ -1,9 +1,14 @@
 package it.polito.tdp.formulaone;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.formulaone.model.Adiacenza;
 import it.polito.tdp.formulaone.model.Model;
+import it.polito.tdp.formulaone.model.Race;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -28,7 +33,7 @@ public class FXMLController {
     private Button btnSelezionaStagione;
 
     @FXML
-    private ComboBox<?> boxGara;
+    private ComboBox<Race> boxGara;
 
     @FXML
     private Button btnSimulaGara;
@@ -44,12 +49,35 @@ public class FXMLController {
 
     @FXML
     void doSelezionaStagione(ActionEvent event) {
-
+    	this.txtResult.clear();
+    	if (this.boxAnno.getValue()==null) {
+    		this.txtResult.appendText("Devi prima selezionare un anno e creare un grafo!\n");
+    		return;
+    	}
+    	this.model.creaGrafo(this.boxAnno.getValue());
+    	this.boxGara.getItems().addAll(this.model.getRacesGrafo());
+    	List<Adiacenza> list = model.getArcoPesoMassimo(this.boxAnno.getValue());
+    	if (list.size() == 0) {
+    		this.txtResult.appendText("Mi dispiace, non ci sono archi!\n");
+    		return;
+    	}
+		if (list.size() == 1) {
+			this.txtResult.appendText("Ecco l'arco di peso massimo: \n");
+			this.txtResult.appendText(list.get(0).toString());
+			return;
+		}
+		for (Adiacenza a : list)
+			this.txtResult.appendText(a.toString()+"\n");
     }
 
     @FXML
     void doSimulaGara(ActionEvent event) {
-
+    	int secondiPitStop = Integer.parseInt(this.textInputK1.getText());
+    	Double probabilitaPitStop = Double.parseDouble(this.textInputK.getText());
+    	Race r = this.boxGara.getValue();
+    	Map<Integer, Integer> mappaPuntiSimulazione = new HashMap<>(this.model.simula(probabilitaPitStop, secondiPitStop, r));
+    	for (int i : mappaPuntiSimulazione.keySet())
+    		System.out.println("Driver "+i+" --> punti "+mappaPuntiSimulazione.get(r)+"\n");
     }
 
     @FXML
