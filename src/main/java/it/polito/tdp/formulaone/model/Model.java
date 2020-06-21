@@ -17,14 +17,23 @@ public class Model {
 	FormulaOneDAO db;
 	SimpleWeightedGraph<Race, DefaultWeightedEdge> graph;
 	Map<Integer, Race> racesIdMap;
+	Boolean grafoCreato;
 	
 	public Model() {
 		this.db = new FormulaOneDAO();
 		this.racesIdMap = new HashMap<>();
+		this.grafoCreato = false;
 	}
 	
 	public List<Integer> getAllYears(){
 		return this.db.getAllYears();
+	}
+	
+	public List<Race> getRacesGrafo(){
+		List<Race> result = new ArrayList<Race>();
+		for(Race r : this.graph.vertexSet())
+			result.add(r);
+		return result;
 	}
 	
 	public void creaGrafo(int year) {
@@ -38,6 +47,7 @@ public class Model {
 		for (Adiacenza a : this.db.getAllAdiacenze(year, racesIdMap))
 			Graphs.addEdgeWithVertices(this.graph, a.getR1(), a.getR2(), a.getPeso());
 		System.out.println("Al grafo sono stati aggiunti "+this.graph.edgeSet().size()+" archi\n");
+		this.grafoCreato = true;
 	}
 	
 	public List<Adiacenza> getArcoPesoMassimo(int year) {
