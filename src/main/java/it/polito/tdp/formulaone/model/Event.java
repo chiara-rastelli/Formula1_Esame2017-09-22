@@ -1,7 +1,5 @@
 package it.polito.tdp.formulaone.model;
 
-import java.time.Duration;
-
 public class Event implements Comparable<Event>{
 	
 	public enum EventType{
@@ -9,65 +7,54 @@ public class Event implements Comparable<Event>{
 		FINE_GIRO,
 	}
 	
+	Integer tempo;
+	SuperPilota superPilota;
+	EventType type;
+	int lap;
+
+	public Event(Integer tempo, SuperPilota superPilota, EventType type, int lap) {
+		super();
+		this.tempo = tempo;
+		this.superPilota = superPilota;
+		this.type = type;
+		this.lap = lap;
+	}
+
+	@Override
+	public int compareTo(Event o) {
+		return this.tempo.compareTo(o.tempo);
+	}
+
+	public Integer getTempo() {
+		return tempo;
+	}
+
+	public void setTempo(Integer tempo) {
+		this.tempo = tempo;
+	}
+
+	public SuperPilota getSuperPilota() {
+		return superPilota;
+	}
+
+	public void setSuperPilota(SuperPilota superPilota) {
+		this.superPilota = superPilota;
+	}
+
 	public EventType getType() {
 		return type;
 	}
-
 
 	public void setType(EventType type) {
 		this.type = type;
 	}
 
-
-	public Duration getMilliseconds() {
-		return milliseconds;
+	public int getLap() {
+		return lap;
 	}
 
-
-	public void setMilliseconds(Duration milliseconds) {
-		this.milliseconds = milliseconds;
-	}
-
-
-	public int getGiro() {
-		return giro;
-	}
-
-
-	public void setGiro(int giro) {
-		this.giro = giro;
-	}
-
-
-	public Integer getDriver() {
-		return driver;
-	}
-
-
-	public void setDriver(Integer driver) {
-		this.driver = driver;
-	}
-
-
-	EventType type;
-	Duration milliseconds;
-	int giro;
-	Integer driver;
-	
-	
-	@Override
-	public int compareTo(Event o) {
-		return this.milliseconds.compareTo(o.milliseconds);
-	}
-
-
-	public Event(EventType type, Duration milliseconds, int giro, Integer driver) {
-		super();
-		this.type = type;
-		this.milliseconds = milliseconds;
-		this.giro = giro;
-		this.driver = driver;
+	public void setLap(int lap) {
+		this.lap = lap;
 	}
 	
-
 }

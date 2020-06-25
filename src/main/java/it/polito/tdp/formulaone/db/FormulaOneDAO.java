@@ -113,6 +113,33 @@ public class FormulaOneDAO {
 		}
 	}
 	
+	public List<Integer> getInfoGara(Race r, Integer driverId) {
+		String sql = 	"SELECT laptimes.milliseconds " + 
+						"FROM races, laptimes " + 
+						"WHERE races.raceId = ? " + 
+						"AND races.year = ? " + 
+						"AND laptimes.driverId = ? " + 
+						"AND laptimes.raceId = races.raceId " + 
+						"ORDER BY laptimes.milliseconds asc";
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, r.getRaceId());
+			st.setInt(2, r.getYear());
+			st.setInt(3, driverId);
+			List<Integer> list = new ArrayList<>();
+			ResultSet rs = st.executeQuery();
+			while (rs.next()) {
+				list.add(rs.getInt("laptimes.milliseconds"));
+			}
+			conn.close();
+			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	public List<Race> getAllRacesBySeason(int year) {
 		String sql = "	SELECT * FROM races WHERE year = ? ";
 		try {

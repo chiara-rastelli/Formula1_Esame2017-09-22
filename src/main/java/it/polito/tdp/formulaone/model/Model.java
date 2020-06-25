@@ -19,6 +19,7 @@ public class Model {
 	Map<Integer, Race> racesIdMap;
 	Boolean grafoCreato;
 	Simulator s;
+	Map<Integer, SuperPilota> superpilotiMap;
 	
 	public Model() {
 		this.db = new FormulaOneDAO();
@@ -27,8 +28,21 @@ public class Model {
 	}
 	
 	public Map<Integer, Integer> simula(Double probabilitaPitStop, int secondiPitStop, Race r){
-		this.s = new Simulator(this.getAllDriversIdRace(r), probabilitaPitStop, secondiPitStop, this.getLapsRace(r), this.getAllLapTimesRace(r));
-		return s.puntiPiloti;
+		superpilotiMap = new HashMap<>();
+		for (Integer i : this.db.getAllDriversIdByRace(r)) {
+			List<Integer> listaTempi = new ArrayList<>(this.db.getInfoGara(r, i));
+			this.superpilotiMap.put(i, new SuperPilota(i, listaTempi));
+		}
+		s = new Simulator(this, secondiPitStop, probabilitaPitStop, r);
+		return s.getRisultatiSimulazione();
+	}
+	
+	public int getNumeroLapsRace(Race r){
+		return this.db.getNumeroGiri(r);
+	}
+	
+	public void getPunteggiPilota() {
+		
 	}
 	
 	public List<LapTime> getAllLapTimesRace(Race r){

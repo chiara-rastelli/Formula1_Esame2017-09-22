@@ -76,8 +76,9 @@ public class FXMLController {
     	Double probabilitaPitStop = Double.parseDouble(this.textInputK.getText());
     	Race r = this.boxGara.getValue();
     	Map<Integer, Integer> mappaPuntiSimulazione = new HashMap<>(this.model.simula(probabilitaPitStop, secondiPitStop, r));
-    	for (int i : mappaPuntiSimulazione.keySet())
-    		System.out.println("Driver "+i+" --> punti "+mappaPuntiSimulazione.get(r)+"\n");
+    	for (Integer i : mappaPuntiSimulazione.keySet()) {
+    		this.txtResult.appendText("Id driver: "+i+"; punteggio simulazione: "+mappaPuntiSimulazione.get(i)+"\n");
+    	}
     }
 
     @FXML
